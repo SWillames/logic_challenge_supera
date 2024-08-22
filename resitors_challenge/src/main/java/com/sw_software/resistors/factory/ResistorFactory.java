@@ -12,12 +12,17 @@ public class ResistorFactory {
 
   public static int resistanceToValue(String value) {
     value = value.toLowerCase().replace(" ohms", "");
-    if (value.endsWith("k")) {
-      return (int) (Double.parseDouble(value.replace("k", "")) * 1000);
-    } else if (value.endsWith("m")) {
-      return (int) (Double.parseDouble(value.replace("m", "")) * 1000000);
-    } else {
-      return Integer.parseInt(value);
+    try {
+      if (value.endsWith("k")) {
+        return (int) (Double.parseDouble(value.replace("k", "")) * 1000);
+      } else if (value.endsWith("m")) {
+        return (int) (Double.parseDouble(value.replace("m", "")) * 1000000);
+      } else {
+        return Integer.parseInt(value);
+      }
+    } catch (NumberFormatException e) {
+      throw new IllegalArgumentException("Formato de entrada inválido. Por favor, insira um valor válido, como '220 " +
+          "ohms', '4.7k ohms' ou '1M ohms'.");
     }
   }
 }
