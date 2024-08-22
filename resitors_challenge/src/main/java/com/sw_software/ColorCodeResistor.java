@@ -3,9 +3,14 @@ package com.sw_software;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ColorCodeResistor {
-  public static String resistorColors(String resitorValue){
-    Map<Integer, String> codeColors = new HashMap<>();
+interface CodeColor{
+  String getColor(int digit);
+}
+
+class CodeColorImpl implements CodeColor{
+  private static final Map<Integer, String> codeColors = new HashMap<>();
+
+  static {
     codeColors.put(0, "preto");
     codeColors.put(1, "marrom");
     codeColors.put(2, "vermelho");
@@ -16,46 +21,63 @@ public class ColorCodeResistor {
     codeColors.put(7, "violeta");
     codeColors.put(8, "cinza");
     codeColors.put(9, "branco");
+  }
 
-    String[] parts = resitorValue.split(" ");
+  @Override
+  public String getColor(int digit) {
+    return codeColors.get(digit);
+  }
+}
+
+class Resistor{
+  private final int value;
+  private final CodeColor color;
+
+  public Resistor(String resistorValue, CodeColor color) {
+    String[] parts = resistorValue.split(" ");
     String value = parts[0];
-
     double numericValue;
     if(value.contains("k")){
       numericValue = Double.parseDouble(value.replace("k","")) * 1000;
     }else if(value.contains("M")){
       numericValue = Double.parseDouble(value.replace("M","")) * 1000000;
     } else {
-      numericValue = Double.parseDouble(value);
+      numericValue = Double.parseDouble(value.replace(" ohms", ""));
     }
 
-    int intValue = (int) numericValue;
-    String digits = String.valueOf(intValue);
+    this.value = (int) numericValue;
+    this.color = color;
+  }
 
-    if(digits.length() == 1){
-      digits = "0" + digits;
+
+  public String getColor() {
+    String digits = String.valueOf(value);
+
+    if (digits.length() == 1) {
+      digits += "0";
     }
 
     int firstDigit = Character.getNumericValue(digits.charAt(0));
     int secondDigit = Character.getNumericValue(digits.charAt(1));
     int multiplier = digits.length() - 2;
 
-    String sequenceColor = codeColors.get(firstDigit) +
-                           " " + codeColors.get(secondDigit) +
-                           " " + codeColors.get(multiplier) +
-                           " " + "dourado";
-
-    return sequenceColor;
+    return String.format("%s %s %s dourado",
+             color.getColor(firstDigit),
+             color.getColor(secondDigit),
+             color.getColor(multiplier));
   }
+}
 
+public class ColorCodeResistor {
   public static void main(String[] args) {
-    System.out.println(resistorColors("10 ohms"));
-    System.out.println(resistorColors("100 ohms"));
-    System.out.println(resistorColors("220 ohms"));
-    System.out.println(resistorColors("330 ohms"));
-    System.out.println(resistorColors("470 ohms"));
-    System.out.println(resistorColors("680 ohms"));
-    System.out.println(resistorColors("1k ohms"));
-    System.out.println(resistorColors("2M ohms"));
+    CodeColor codeColor = new CodeColorImpl();
+    System.out.println(new Resistor("10 ohms", codeColor).getColor());
+    System.out.println(new Resistor("100 ohms", codeColor).getColor());
+    System.out.println(new Resistor("220 ohms", codeColor).getColor());
+    System.out.println(new Resistor("330 ohms", codeColor).getColor());
+    System.out.println(new Resistor("470 ohms", codeColor).getColor());
+    System.out.println(new Resistor("680 ohms", codeColor).getColor());
+    System.out.println(new Resistor("1k ohms", codeColor).getColor());
+    System.out.println(new Resistor("2M ohms", codeColor).getColor());
   }
 }
