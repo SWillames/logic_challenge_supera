@@ -8,11 +8,6 @@ import java.util.Scanner;
 
 public class ColorCodeResistor {
   public static void main(String[] args) {
-//    Scanner scanner = new Scanner(System.in);
-//    System.out.print("Digite o valor da resistência:  ");
-//    String value = scanner.nextLine();
-//    Resistor resistor = ResistorFactory.createResistor(value, new CodeColorImpl());
-//    System.out.println("Código de cores: "+resistor.getCodeColor());
     Scanner scanner = new Scanner(System.in);
 
     while (true) {
